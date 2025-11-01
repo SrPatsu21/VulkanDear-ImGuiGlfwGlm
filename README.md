@@ -6,7 +6,7 @@ You just need a src folder on workdir that is: `file(GLOB_RECURSE SOURCES src/*.
 
 if you use the default CmakeLists.txt make sure this:
 
-```CMakeLists.txt
+```cmake
 set(SHADER_DIR ${CMAKE_SOURCE_DIR}/src/client/assets/shaders)
 set(COMPILED_SHADER_DIR ${CMAKE_BINARY_DIR}/shaders)
 
@@ -22,7 +22,7 @@ set(SHADERS
 
 - docker-compose.yml
 
-```yml
+```yaml
 services:
   builder:
     image: dear-glfw-vulkan-compiler
@@ -87,7 +87,7 @@ docker compose run builder
         ./scripts/build_all.sh
     ```
 
-## How to setup just docker (if alredy docker compose no need)
+## How to setup just docker (if already docker compose no need)
 
 1. build image
 
@@ -95,7 +95,7 @@ docker compose run builder
     docker build -t dear-glfw-vulkan-compiler .
     ```
 
-2. Run conteiner interative mode
+2. Run container interative mode
 
     ```shell
     docker run --rm -it -v $(pwd):/workspace dear-glfw-vulkan-compiler
@@ -142,7 +142,7 @@ docker compose run builder
     -v $(pwd)/src:/workspace/src \
     -v $(pwd)/MyAltCMakeLists.txt:/workspace/CMakeLists.txt \
     -v $(pwd)/MyAltToolchain-mingw.cmake:/workspace/toolchain-mingw.cmake \
-    -v $(pwd)/MyAltLib:/workspace/Lib \
+    -v $(pwd)/MyAltLib:/workspace/lib \
     -v $(pwd)/MyAltScripts:/workspace/scripts \
     dear-glfw-vulkan-compiler
     ```
