@@ -1,24 +1,18 @@
-# How to
+# How to setup
 
-1. Make all files executable
-
-    ```shell
-    chmod +x scripts/*.sh
-    ```
-
-2. build image
+1. build image
 
     ```shell
     docker build -t dear-glfw-vulkan-compiler .
     ```
 
-3. Run conteiner interative mode
+2. Run conteiner interative mode
 
     ```shell
     docker run --rm -it -v $(pwd):/workspace dear-glfw-vulkan-compiler
     ```
 
-4. Run the scripts
+3. Run the scripts
 
     - Linux Debug
 
@@ -43,3 +37,15 @@
         ```shell
         ./scripts/build_windows_release.sh
         ```
+
+4. Temporarily override files
+
+    ```shell
+    docker run -it --rm \
+    -v $(pwd)/src:/workspace/src \
+    -v $(pwd)/MyAltCMakeLists.txt:/workspace/CMakeLists.txt \
+    -v $(pwd)/MyAltToolchain-mingw.cmake:/workspace/toolchain-mingw.cmake \
+    -v $(pwd)/MyAltLib:/workspace/Lib \
+    -v $(pwd)/MyAltScripts:/workspace/scripts \
+    dear-glfw-vulkan-compiler
+    ```

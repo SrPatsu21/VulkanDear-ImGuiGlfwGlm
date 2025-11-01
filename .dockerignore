@@ -1,0 +1,35 @@
+# Ignore build outputs
+build/
+build-release/
+build-windows/
+build-windows-release/
+
+# Ignore project source — it will be mounted at runtime
+src/
+
+# Ignore VCS and editor files
+.git/
+.gitignore
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore OS cruft
+.DS_Store
+Thumbs.db
+
+# Ignore docs and notes not needed for image
+README.md
+newversion.md
+HowSetUpForLinuxDebian.md
+
+# Ignore temporary archives or caches
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.tmp
+*.log
+
+# Ignore anything else you don’t want baked in

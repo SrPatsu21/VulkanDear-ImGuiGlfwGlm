@@ -3,14 +3,16 @@ FROM ubuntu:25.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential cmake ninja-build pkg-config git mingw-w64 ca-certificates curl wget
+    apt-get install -y --no-install-recommends build-essential cmake ninja-build pkg-config git mingw-w64 curl wget gnupg ca-certificates
 
 # GLFW
 RUN apt-get install -y --no-install-recommends libgl-dev wayland-protocols libwayland-bin libwayland-dev libxkbcommon-dev libxrandr-dev \
         libxinerama-dev libxcursor-dev libxi-dev pkg-config mingw-w64 mingw-w64-x86-64-dev libgl1-mesa-dev
 # Vulkan
-RUN curl -fsSL https://packages.lunarg.com/lunarg-signing-key-pub.asc | tee /etc/apt/trusted.gpg.d/lunarg.gpg > /dev/null && \
-    wget -qO /etc/apt/sources.list.d/lunarg-vulkan-1.3.296-noble.list "https://packages.lunarg.com/vulkan/1.3.296/lunarg-vulkan-1.3.296-noble.list" && \
+RUN curl -fsSL https://packages.lunarg.com/lunarg-signing-key-pub.asc | gpg --dearmor -o /usr/share/keyrings/lunarg.gpg && \
+    wget -qO /etc/apt/sources.list.d/lunarg-vulkan.list https://packages.lunarg.com/vulkan/1.3.296/lunarg-vulkan-1.3.296-noble.list && \
+    sed -i 's#https://packages.lunarg.com/vulkan/1.3.296#\[signed-by=/usr/share/keyrings/lunarg.gpg] https://packages.lunarg.com/vulkan/1.3.296#' \
+        /etc/apt/sources.list.d/lunarg-vulkan.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends vulkan-utility-libraries-dev libvulkan-dev vulkan-tools vulkan-validationlayers
 # GLM
@@ -20,7 +22,7 @@ RUN apt-get install -y --no-install-recommends glslang-tools
 # Assimp
 RUN apt-get install -y --no-install-recommends libassimp-dev
 # Embedded libs
-RUN RUN apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends apt-file libdecor-0-0 libdecor-0-plugin-1-gtk libdecor-0-plugin-1-cairo libgtk-3-0 gnome-themes-extra-data && \
     apt-file update && \
     DEST=lib/linux && \
@@ -39,7 +41,7 @@ RUN RUN apt-get update && \
     mkdir -p "$DEST/share/gtk-3.0" && \
     cp -r /usr/share/gtk-3.0/* "$DEST/share/gtk-3.0/" && \
     mkdir -p "$DEST/share/glib-2.0/schemas" && \
-    cp -r /usr/share/glib-2.0/schemas/* "$DEST/share/glib-2.0/schemas/" && \
+    cp -r /usr/share/glib-2.0/schemas/* "$DEST/share/glib-2.0/schemas/"
 # Remove apt list
 RUN rm -rf /var/lib/apt/lists/*
 
