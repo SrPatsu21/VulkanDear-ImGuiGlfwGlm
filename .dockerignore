@@ -20,7 +20,6 @@ src/
 Thumbs.db
 
 # Ignore docs and notes not needed for image
-README.md
 newversion.md
 HowSetUpForLinuxDebian.md
 

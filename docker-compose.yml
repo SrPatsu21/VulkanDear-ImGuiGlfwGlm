@@ -1,0 +1,19 @@
+services:
+  builder:
+    image: dear-glfw-vulkan-compiler
+    container_name: dear-glfw-vulkan-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    working_dir: /workspace
+    volumes:
+      - ./build:/workspace/build
+      - ./build-release:/workspace/build-release
+      - ./build-windows:/workspace/build-windows
+      - ./build-windows-release:/workspace/build-windows-release
+
+      - ./src:/workspace/src
+      - ./scripts:/workspace/scripts
+    command: ["/bin/bash"]

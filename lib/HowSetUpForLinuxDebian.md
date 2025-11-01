@@ -148,6 +148,15 @@ cp -r /usr/share/glib-2.0/schemas/* "$DEST/share/glib-2.0/schemas/"
 
 ## Build
 
+- build
+
+```shell
+mkdir build
+cd build
+cmake ..
+make
+```
+
 - fix wayland
 
 ```shell
@@ -162,15 +171,6 @@ export LD_LIBRARY_PATH="$HERE/lib/linux:$LD_LIBRARY_PATH"
 "$HERE/ProjectD.out"
 EOF
 chmod +x run.sh
-```
-
-- build
-
-```shell
-mkdir build
-cd build
-cmake ..
-make
 ```
 
 ## Build for Windows
@@ -187,6 +187,15 @@ make
 
 ## Build Release
 
+- build
+
+```shell
+mkdir build-release
+cd build-release
+cmake .. -DCMAKE_BUILD_TYPE=Release # for realease
+make
+```
+
 - fix wayland
 
 ```shell
@@ -201,15 +210,6 @@ export LD_LIBRARY_PATH="$HERE/lib/linux:$LD_LIBRARY_PATH"
 "$HERE/ProjectD.out"
 EOF
 chmod +x run.sh
-```
-
-- build
-
-```shell
-mkdir build-release
-cd build-release
-cmake .. -DCMAKE_BUILD_TYPE=Release # for realease
-make
 ```
 
 ## Build for Windows Release

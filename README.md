@@ -1,7 +1,93 @@
 # Vulkan Dear-ImGui Glfw Glm
+
 Container to compile everything together
 
-## How to setup
+You just need a src folder on workdir that is: `file(GLOB_RECURSE SOURCES src/*.cpp)`
+
+if you use the default CmakeLists.txt make sure this:
+
+```CMakeLists.txt
+set(SHADER_DIR ${CMAKE_SOURCE_DIR}/src/client/assets/shaders)
+set(COMPILED_SHADER_DIR ${CMAKE_BINARY_DIR}/shaders)
+
+file(MAKE_DIRECTORY ${COMPILED_SHADER_DIR})
+
+set(SHADERS
+    ${SHADER_DIR}/vertex.glsl
+    ${SHADER_DIR}/fragment.glsl
+)
+```
+
+## Docker Compose setup
+
+- docker-compose.yml
+
+```yml
+services:
+  builder:
+    image: dear-glfw-vulkan-compiler
+    container_name: dear-glfw-vulkan-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    working_dir: /workspace
+    volumes:
+      - ./build:/workspace/build
+      - ./build-release:/workspace/build-release
+      - ./build-windows:/workspace/build-windows
+      - ./build-windows-release:/workspace/build-windows-release
+
+      - ./src:/workspace/src
+      - ./scripts:/workspace/scripts
+    command: ["/bin/bash"]
+```
+
+- run
+
+```shell
+docker compose build
+```
+
+```shell
+docker compose run builder
+```
+
+- run script
+  - Linux Debug
+
+    ```shell
+    ./scripts/build_linux.sh
+    ```
+
+  - Linux Release
+
+    ```shell
+    ./scripts/build_linux_release.sh
+    ```
+
+  - Windows Debug
+
+    ```shell
+    ./scripts/build_windows.sh
+    ```
+
+  - Windows Release
+
+    ```shell
+    ./scripts/build_windows_release.sh
+    ```
+
+  - Others scripts
+
+    ```shell
+        ./scripts/build_all_debug.sh
+        ./scripts/build_all_release.sh
+        ./scripts/build_all.sh
+    ```
+
+## How to setup just docker (if alredy docker compose no need)
 
 1. build image
 

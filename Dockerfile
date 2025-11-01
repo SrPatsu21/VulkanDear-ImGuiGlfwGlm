@@ -2,6 +2,7 @@ FROM ubuntu:25.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Essential build tools and dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends build-essential cmake ninja-build pkg-config git mingw-w64 curl wget gnupg ca-certificates
 
@@ -45,12 +46,18 @@ RUN apt-get update && \
 # Remove apt list
 RUN rm -rf /var/lib/apt/lists/*
 
+# Set working directory for project
 WORKDIR /workspace
 
-COPY . .
+# Copy only build-related files (libs, scripts, cmake)
+COPY lib /workspace/lib
+COPY scripts /workspace/scripts
+COPY CMakeLists.txt toolchain-mingw.cmake /workspace/
 
-RUN chmod +x scripts/*.sh
+# Make scripts executable
+RUN chmod +x /workspace/scripts/*.sh
 
+# Declare build folders as exportable volumes
 VOLUME ["/workspace/build", "/workspace/build-release", "/workspace/build-windows", "/workspace/build-windows-release"]
 
 CMD ["/bin/bash"]
