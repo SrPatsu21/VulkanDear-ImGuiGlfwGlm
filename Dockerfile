@@ -1,4 +1,4 @@
-FROM ubuntu:25.04-minimal
+FROM ubuntu:25.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
