@@ -1,13 +1,13 @@
-# Ignore build outputs
+<!-- Ignore build outputs -->
 build/
 build-release/
 build-windows/
 build-windows-release/
 
-# Ignore project source — it will be mounted at runtime
+<!-- Ignore project source — it will be mounted at runtime -->
 src/
 
-# Ignore VCS and editor files
+<!-- Ignore VCS and editor files -->
 .git/
 .gitignore
 .vscode/
@@ -15,20 +15,18 @@ src/
 *.swp
 *.swo
 
-# Ignore OS cruft
+<!-- Ignore OS cruft -->
 .DS_Store
 Thumbs.db
 
-# Ignore docs and notes not needed for image
+<!-- Ignore docs and notes not needed for image -->
 newversion.md
 HowSetUpForLinuxDebian.md
 
-# Ignore temporary archives or caches
+<!-- Ignore temporary archives or caches -->
 *.zip
 *.tar
 *.tar.gz
 *.7z
 *.tmp
 *.log
-
-# Ignore anything else you don’t want baked in

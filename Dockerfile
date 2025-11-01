@@ -1,10 +1,10 @@
-FROM ubuntu:25.04
+FROM ubuntu:25.04-minimal
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Essential build tools and dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential cmake ninja-build pkg-config git mingw-w64 curl wget gnupg ca-certificates
+    apt-get install -y --no-install-recommends build-essential cmake pkg-config git mingw-w64 curl wget gnupg ca-certificates
 
 # GLFW
 RUN apt-get install -y --no-install-recommends libgl-dev wayland-protocols libwayland-bin libwayland-dev libxkbcommon-dev libxrandr-dev \
@@ -44,7 +44,9 @@ RUN apt-get update && \
     mkdir -p "$DEST/share/glib-2.0/schemas" && \
     cp -r /usr/share/glib-2.0/schemas/* "$DEST/share/glib-2.0/schemas/"
 # Remove apt list
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/*
 
 # Set working directory for project
 WORKDIR /workspace

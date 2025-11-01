@@ -40,7 +40,8 @@ services:
       - ./build-windows-release:/workspace/build-windows-release
 
       - ./src:/workspace/src
-      - ./scripts:/workspace/scripts
+      # if you want to replace the scripts
+      # - ./scripts:/workspace/scripts
     command: ["/bin/bash"]
 ```
 
@@ -51,7 +52,8 @@ docker compose build
 ```
 
 ```shell
-docker compose run builder
+docker compose up -d
+docker exec -it dear-glfw-vulkan-dev bash
 ```
 
 - run script
