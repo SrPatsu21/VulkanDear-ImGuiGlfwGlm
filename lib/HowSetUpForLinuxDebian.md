@@ -185,13 +185,6 @@ make
 
 ## Build Release
 
-```shell
-mkdir build-release
-cd build-release
-cmake .. -DCMAKE_BUILD_TYPE=Release # for realease
-make
-```
-
 - fix wayland
 
 ```shell
@@ -206,6 +199,15 @@ export LD_LIBRARY_PATH="$HERE/lib/linux:$LD_LIBRARY_PATH"
 "$HERE/ProjectD.out"
 EOF
 chmod +x run.sh
+```
+
+- build
+
+```shell
+mkdir build-release
+cd build-release
+cmake .. -DCMAKE_BUILD_TYPE=Release # for realease
+make
 ```
 
 ## Build for Windows Release
