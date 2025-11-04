@@ -54,7 +54,9 @@ WORKDIR /workspace
 # Copy only build-related files (libs, scripts, cmake)
 COPY lib /workspace/lib
 COPY scripts /workspace/scripts
-COPY CMakeLists.txt toolchain-mingw.cmake /workspace/
+COPY CMakeLists.txt /workspace/
+COPY toolchain-mingw.cmake /workspace/
+COPY src /workspace/src
 
 # Make scripts executable
 RUN chmod +x /workspace/scripts/*.sh

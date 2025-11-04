@@ -1,20 +1,29 @@
 services:
-  builder:
-    image: dear-glfw-vulkan-compiler
-    container_name: dear-glfw-vulkan-dev
-    build:
-      context: .
-      dockerfile: Dockerfile
-    stdin_open: true
-    tty: true
-    working_dir: /workspace
-    volumes:
-      - ./build:/workspace/build
-      - ./build-release:/workspace/build-release
-      - ./build-windows:/workspace/build-windows
-      - ./build-windows-release:/workspace/build-windows-release
+    buildervidgen:
+        image: srpatsu21/dear-glfw-vulkan-compiler
+        container_name: dear-glfw-vulkan-vidgen
+        stdin_open: true
+        tty: true
+        working_dir: /workspace
+        volumes:
+            # create build files
+            - ./build:/workspace/build
+            - ./build-release:/workspace/build-release
+            - ./build-windows:/workspace/build-windows
+            - ./build-windows-release:/workspace/build-windows-release
 
-      - ./src:/workspace/src
-      # if you want to replace the scripts
-      # - ./scripts:/workspace/scripts
-    command: ["/bin/bash"]
+            # map your libs and config
+            - ./CMakeLists.txt:/workspace/CMakeLists.txt
+            - ./toolchain-mingw.cmake:/workspace/toolchain-mingw.cmake
+            - lib-data:/workspace/lib
+
+            # make src interactive
+            - ./src:/workspace/src
+
+            # if you want to replace the scripts
+            # - ./scripts:/workspace/scripts
+        command: ["/bin/bash"]
+
+volumes:
+    lib-data:
+        driver: local

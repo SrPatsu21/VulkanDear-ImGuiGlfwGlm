@@ -4,9 +4,6 @@ build-release/
 build-windows/
 build-windows-release/
 
-<!-- Ignore project source — it will be mounted at runtime -->
-src/
-
 <!-- Ignore VCS and editor files -->
 .git/
 .gitignore

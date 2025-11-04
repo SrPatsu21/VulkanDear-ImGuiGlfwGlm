@@ -17,10 +17,14 @@
         -v $(pwd)/build-release:/workspace/build-release \
         -v $(pwd)/build-windows:/workspace/build-windows \
         -v $(pwd)/build-windows-release:/workspace/build-windows-release \
+        -v $(pwd)/CMakeLists.txt:/workspace/CMakeLists.txt \
+        -v $(pwd)/toolchain-mingw.cmake:/workspace/toolchain-mingw.cmake \
+        -v $(pwd)/lib:/workspace/lib \
+        -v $(pwd)/scripts:/workspace/scripts \
         dear-glfw-vulkan-compiler
     ```
 
-3. Run the scripts
+3. Run the scripts to compile for:
 
     - Linux Debug
 
@@ -53,15 +57,3 @@
             ./scripts/build_all_release.sh
             ./scripts/build_all.sh
         ```
-
-4. Temporarily override files
-
-    ```shell
-    docker run -it --rm \
-        -v $(pwd)/src:/workspace/src \
-        -v $(pwd)/MyAltCMakeLists.txt:/workspace/CMakeLists.txt \
-        -v $(pwd)/MyAltToolchain-mingw.cmake:/workspace/toolchain-mingw.cmake \
-        -v $(pwd)/MyAltLib:/workspace/Lib \
-        -v $(pwd)/MyAltScripts:/workspace/scripts \
-        dear-glfw-vulkan-compiler
-    ```

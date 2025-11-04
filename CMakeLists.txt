@@ -170,21 +170,21 @@ add_custom_target(Shaders ALL DEPENDS ${SHADER_OUTPUTS})
     file(GLOB_RECURSE SOURCES src/*.cpp)
 
 # Create the executable
-    add_executable(ProjectD ${SOURCES} ${IMGUI_SOURCES} ${STB_SOURCES})
-    add_dependencies(ProjectD Shaders)
+    add_executable(New_Project ${SOURCES} ${IMGUI_SOURCES} ${STB_SOURCES})
+    add_dependencies(New_Project Shaders)
 
     if(WIN32)
         set_target_properties(
-            ProjectD
+            New_Project
             PROPERTIES
-                OUTPUT_NAME "ProjectD"
+                OUTPUT_NAME "New_Project"
                 SUFFIX ".exe"
         )
     elseif(UNIX)
         set_target_properties(
-            ProjectD
+            New_Project
             PROPERTIES
-                OUTPUT_NAME "ProjectD"
+                OUTPUT_NAME "New_Project"
                 SUFFIX ".out"
         )
 
@@ -196,7 +196,7 @@ add_custom_target(Shaders ALL DEPENDS ${SHADER_OUTPUTS})
 
         file(COPY ${LIBS_DIR}/libdecor DESTINATION ${CMAKE_BINARY_DIR}/lib/linux)
 
-        set_target_properties(ProjectD PROPERTIES
+        set_target_properties(New_Project PROPERTIES
             INSTALL_RPATH "$ORIGIN/lib/linux"
             BUILD_WITH_INSTALL_RPATH TRUE
         )
@@ -206,8 +206,8 @@ add_custom_target(Shaders ALL DEPENDS ${SHADER_OUTPUTS})
 # Link libraries
 if(WIN32)
     # Link against the Vulkan loader library
-    target_link_libraries(ProjectD vulkan-1 -static-libgcc -static-libstdc++)
+    target_link_libraries(New_Project vulkan-1 -static-libgcc -static-libstdc++)
 endif()
 
-target_link_libraries(ProjectD glfw)
-target_link_libraries(ProjectD ${LIBRARIES})
+target_link_libraries(New_Project glfw)
+target_link_libraries(New_Project ${LIBRARIES})
