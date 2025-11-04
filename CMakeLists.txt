@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ProjectD)
+project(New_Project)
 
 # Set C++ standard
     set(CMAKE_CXX_STANDARD 17)
