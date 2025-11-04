@@ -118,7 +118,7 @@ docker exec -it dear-glfw-vulkan-dev bash
 1. Run container interative mode
 
     ```shell
-    docker run --rm -it -v $(pwd):/workspace dear-glfw-vulkan-compiler
+    docker run --rm -it -v $(pwd):/workspace srpatsu21/dear-glfw-vulkan-compiler
     ```
 
 2. Run the scripts
@@ -164,5 +164,5 @@ docker exec -it dear-glfw-vulkan-dev bash
     -v $(pwd)/MyAltToolchain-mingw.cmake:/workspace/toolchain-mingw.cmake \
     -v $(pwd)/MyAltLib:/workspace/lib \
     -v $(pwd)/MyAltScripts:/workspace/scripts \
-    dear-glfw-vulkan-compiler
+    srpatsu21/dear-glfw-vulkan-compiler
     ```
