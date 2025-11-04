@@ -1,7 +1,7 @@
 services:
     buildervidgen:
         image: srpatsu21/dear-glfw-vulkan-compiler
-        container_name: dear-glfw-vulkan-vidgen
+        container_name: dear-glfw-vulkan-dev
         stdin_open: true
         tty: true
         working_dir: /workspace
@@ -23,7 +23,3 @@ services:
             # if you want to replace the scripts
             # - ./scripts:/workspace/scripts
         command: ["/bin/bash"]
-
-volumes:
-    lib-data:
-        driver: local

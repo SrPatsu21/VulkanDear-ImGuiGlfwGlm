@@ -2,21 +2,44 @@
 
 Container to compile everything together
 
-You just need a src folder on workdir that is: `file(GLOB_RECURSE SOURCES src/*.cpp)`
+## script to make a start setup
 
-if you use the default CmakeLists.txt make sure this:
+- Linux
 
-```cmake
-set(SHADER_DIR ${CMAKE_SOURCE_DIR}/src/client/assets/shaders)
-set(COMPILED_SHADER_DIR ${CMAKE_BINARY_DIR}/shaders)
+  ```shell
+  set -e
 
-file(MAKE_DIRECTORY ${COMPILED_SHADER_DIR})
+  IMAGE="srpatsu21/dear-glfw-vulkan-compiler"
+  DEST="."
 
-set(SHADERS
-    ${SHADER_DIR}/vertex.glsl
-    ${SHADER_DIR}/fragment.glsl
-)
-```
+  echo "📦 Copying entire /workspace from image '$IMAGE' to local folder '$DEST'..."
+
+  mkdir -p "$DEST"
+  docker run --rm -v "$(pwd)/$DEST":/copy-dest "$IMAGE" \
+    bash -c "cp -r /workspace/* /copy-dest/ || true"
+
+  echo "✅ All files from /workspace copied to $DEST"
+  ```
+
+- Windows
+
+  ```shell
+  $ErrorActionPreference = "Stop"
+
+  $image = "srpatsu21/dear-glfw-vulkan-compiler"
+  $dest = "."
+
+  Write-Host "📦 Copying entire /workspace from image '$image' to local folder '$dest'..."
+
+  if (-not (Test-Path $dest)) {
+      New-Item -ItemType Directory -Path $dest | Out-Null
+  }
+
+  docker run --rm -v "${PWD}\$dest:/copy-dest" $image `
+      bash -c "cp -r /workspace/* /copy-dest/ || true"
+
+  Write-Host "✅ All files from /workspace copied to $dest"
+  ```
 
 ## Docker Compose setup
 
@@ -24,32 +47,33 @@ set(SHADERS
 
 ```yaml
 services:
-  builder:
-    image: dear-glfw-vulkan-compiler
-    container_name: dear-glfw-vulkan-dev
-    build:
-      context: .
-      dockerfile: Dockerfile
-    stdin_open: true
-    tty: true
-    working_dir: /workspace
-    volumes:
-      - ./build:/workspace/build
-      - ./build-release:/workspace/build-release
-      - ./build-windows:/workspace/build-windows
-      - ./build-windows-release:/workspace/build-windows-release
+    builder:
+        image: srpatsu21/dear-glfw-vulkan-compiler
+        container_name: dear-glfw-vulkan-dev
+        stdin_open: true
+        tty: true
+        working_dir: /workspace
+        volumes:
+            # create build files
+            - ./build:/workspace/build
+            - ./build-release:/workspace/build-release
+            - ./build-windows:/workspace/build-windows
+            - ./build-windows-release:/workspace/build-windows-release
 
-      - ./src:/workspace/src
-      # if you want to replace the scripts
-      # - ./scripts:/workspace/scripts
-    command: ["/bin/bash"]
+            # map your libs and config
+            - ./CMakeLists.txt:/workspace/CMakeLists.txt
+            - ./toolchain-mingw.cmake:/workspace/toolchain-mingw.cmake
+            - lib-data:/workspace/lib
+
+            # make src interactive
+            - ./src:/workspace/src
+
+            # if you want to replace the scripts
+            # - ./scripts:/workspace/scripts
+        command: ["/bin/bash"]
 ```
 
-- run
-
-```shell
-docker compose build
-```
+- Acess the container to compile
 
 ```shell
 docker compose up -d
@@ -91,19 +115,13 @@ docker exec -it dear-glfw-vulkan-dev bash
 
 ## How to setup just docker (if already docker compose no need)
 
-1. build image
-
-    ```shell
-    docker build -t dear-glfw-vulkan-compiler .
-    ```
-
-2. Run container interative mode
+1. Run container interative mode
 
     ```shell
     docker run --rm -it -v $(pwd):/workspace dear-glfw-vulkan-compiler
     ```
 
-3. Run the scripts
+2. Run the scripts
 
     - Linux Debug
 
@@ -137,7 +155,7 @@ docker exec -it dear-glfw-vulkan-dev bash
             ./scripts/build_all.sh
         ```
 
-4. Temporarily override files if you want
+3. Temporarily override files if you want
 
     ```shell
     docker run -it --rm \
