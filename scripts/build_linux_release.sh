@@ -13,6 +13,6 @@ export XDG_DATA_DIRS="$HERE/lib/linux/share:/usr/share"
 export GDK_BACKEND=wayland,x11
 export LD_LIBRARY_PATH="$HERE/lib/linux:$LD_LIBRARY_PATH"
 
-"$HERE/ProjectD.out"
+"$HERE/ProjectName"
 EOF
 chmod +x run.sh

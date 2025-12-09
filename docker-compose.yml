@@ -1,6 +1,6 @@
 services:
-    buildervidgen:
-        image: srpatsu21/dear-glfw-vulkan-compiler
+    dear-glfw-vulkan-compiler:
+        image: srpatsu21/dear-glfw-vulkan-compiler:1.0.0
         container_name: dear-glfw-vulkan-dev
         stdin_open: true
         tty: true
@@ -15,11 +15,14 @@ services:
             # map your libs and config
             - ./CMakeLists.txt:/workspace/CMakeLists.txt
             - ./toolchain-mingw.cmake:/workspace/toolchain-mingw.cmake
-            - lib-data:/workspace/lib
+            - ./lib:/workspace/lib
 
             # make src interactive
             - ./src:/workspace/src
 
             # if you want to replace the scripts
-            # - ./scripts:/workspace/scripts
+            - ./scripts:/workspace/scripts
+
+            # map extensions here
+            - ./vscode-extensions:/root/.vscode-server/extensions/
         command: ["/bin/bash"]

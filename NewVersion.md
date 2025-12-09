@@ -28,7 +28,7 @@
 3. build image
 
     ```shell
-    docker build -t dear-glfw-vulkan-compiler .
+    docker build -t srpatsu21/dear-glfw-vulkan-compiler:latest .
     ```
 
 4. Run conteiner interative mode
