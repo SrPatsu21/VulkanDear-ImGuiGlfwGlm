@@ -1,12 +1,37 @@
-# How to setup
+# How to create new version
 
-1. build image
+1. Copy old env
+
+    ```shell
+    #!/usr/bin/env bash
+    set -e
+
+    IMAGE="srpatsu21/dear-glfw-vulkan-compiler:latest"
+    DEST="."
+
+    mkdir -p "$DEST"
+    mkdir -p "$DEST/vscode-extensions"
+
+    docker run --rm \
+        -v "$(pwd)/$DEST":/copy-dest \
+        "$IMAGE" \
+        bash -c "
+            cp -r /workspace/* /copy-dest/ || true
+            cp -r /root/.vscode-server/extensions /copy-dest/vscode-extensions/ || true
+        "
+
+    echo "files from container copied to $DEST"
+    ```
+
+2. Change the env as you want
+
+3. build image
 
     ```shell
     docker build -t dear-glfw-vulkan-compiler .
     ```
 
-2. Run conteiner interative mode
+4. Run conteiner interative mode
 
     You just need to set the volumes that you will use.
 
@@ -24,7 +49,7 @@
         dear-glfw-vulkan-compiler
     ```
 
-3. Run the scripts to compile for:
+5. Run the scripts to compile for:
 
     - Linux Debug
 

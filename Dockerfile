@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Essential build tools and dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential cmake pkg-config git mingw-w64 curl wget gnupg ca-certificates
+    apt-get install -y --no-install-recommends build-essential cmake pkg-config git mingw-w64 curl wget gnupg ca-certificates openssh-client
 
 # GLFW
 RUN apt-get install -y --no-install-recommends libgl-dev wayland-protocols libwayland-bin libwayland-dev libxkbcommon-dev libxrandr-dev \
@@ -43,6 +43,12 @@ RUN apt-get update && \
     cp -r /usr/share/gtk-3.0/* "$DEST/share/gtk-3.0/" && \
     mkdir -p "$DEST/share/glib-2.0/schemas" && \
     cp -r /usr/share/glib-2.0/schemas/* "$DEST/share/glib-2.0/schemas/"
+
+# vs code
+RUN mkdir -p /root/.vscode-server/server
+RUN curl -L https://update.code.visualstudio.com/latest/server-linux-x64/stable \
+    | tar -xz -C /root/.vscode-server/server --strip-components=1
+
 # Remove apt list
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
@@ -57,6 +63,8 @@ COPY scripts /workspace/scripts
 COPY CMakeLists.txt /workspace/
 COPY toolchain-mingw.cmake /workspace/
 COPY src /workspace/src
+COPY vscode-extensions /root/.vscode-server/extensions/
+
 
 # Make scripts executable
 RUN chmod +x /workspace/scripts/*.sh
