@@ -10,12 +10,10 @@
 #include <stdexcept>
 
 int main() {
-    // --- GLFW ---
     if (!glfwInit()) return -1;
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     GLFWwindow* window = glfwCreateWindow(800, 600, "ImGui Vulkan Minimal", nullptr, nullptr);
 
-    // --- Vulkan instance ---
     VkInstance instance;
     {
         VkApplicationInfo app{VK_STRUCTURE_TYPE_APPLICATION_INFO};
@@ -33,18 +31,15 @@ int main() {
         vkCreateInstance(&ci, nullptr, &instance);
     }
 
-    // --- Surface ---
     VkSurfaceKHR surface;
     glfwCreateWindowSurface(instance, window, nullptr, &surface);
 
-    // --- Pick first GPU ---
     uint32_t gpuCount = 0;
     vkEnumeratePhysicalDevices(instance, &gpuCount, nullptr);
     std::vector<VkPhysicalDevice> gpus(gpuCount);
     vkEnumeratePhysicalDevices(instance, &gpuCount, gpus.data());
     VkPhysicalDevice gpu = gpus[0];
 
-    // --- Find graphics queue family ---
     uint32_t qCount = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(gpu, &qCount, nullptr);
     std::vector<VkQueueFamilyProperties> qProps(qCount);
@@ -60,7 +55,6 @@ int main() {
         }
     }
 
-    // --- Logical device ---
     VkDevice device;
     VkQueue queue;
     {
@@ -78,7 +72,6 @@ int main() {
         vkGetDeviceQueue(device, gfxIndex, 0, &queue);
     }
 
-    // --- Minimal render pass ---
     VkRenderPass renderPass;
     {
         VkAttachmentDescription att{};
@@ -107,7 +100,6 @@ int main() {
         vkCreateRenderPass(device, &rp, nullptr, &renderPass);
     }
 
-    // --- Descriptor pool for ImGui ---
     VkDescriptorPoolSize pool_sizes[] = {
         { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
     };
@@ -119,7 +111,6 @@ int main() {
     VkDescriptorPool descriptorPool;
     vkCreateDescriptorPool(device, &pool_info, nullptr, &descriptorPool);
 
-    // --- ImGui init ---
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -144,13 +135,11 @@ int main() {
 
     ImGui_ImplVulkan_Init(&init_info);
 
-    // Add default font
     ImGui::GetIO().Fonts->AddFontDefault();
 
-    // --- Main loop ---
-    uint32_t imageCount = 2; // número mínimo de imagens
-    std::vector<VkImage> swapchainImages(imageCount); // placeholder, no swapchain real
-    std::vector<VkFramebuffer> framebuffers(imageCount); // placeholder, se quiser usar renderPass real
+    uint32_t imageCount = 2;
+    std::vector<VkImage> swapchainImages(imageCount);
+    std::vector<VkFramebuffer> framebuffers(imageCount);
     std::vector<VkCommandBuffer> commandBuffers(imageCount);
 
     while (!glfwWindowShouldClose(window)) {
@@ -166,20 +155,18 @@ int main() {
 
         ImGui::Render();
 
-        // Comando mínimo de render (fundo colorido)
         VkClearValue clear{};
-        clear.color = {{0.1f, 0.2f, 0.3f, 1.0f}}; // azul escuro
+        clear.color = {{0.1f, 0.2f, 0.3f, 1.0f}};
 
         VkRenderPassBeginInfo rpbi{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
         rpbi.renderPass = renderPass;
-        rpbi.framebuffer = framebuffers[0]; // placeholder
+        rpbi.framebuffer = framebuffers[0];
         rpbi.renderArea.offset = {0, 0};
         rpbi.renderArea.extent = {800, 600};
         rpbi.clearValueCount = 1;
         rpbi.pClearValues = &clear;
     }
 
-    // --- Cleanup ---
     ImGui_ImplVulkan_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

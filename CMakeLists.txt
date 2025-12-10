@@ -111,7 +111,7 @@ set(SHADERS
 # stb_image
 set(STB_DIR ${CMAKE_SOURCE_DIR}/lib/stb)
 include_directories(${STB_DIR})
-set(STB_SOURCES src/client/image/stb_impl.cpp) # need to add others for stb
+set(STB_SOURCES src/client/image/stb_image_impl.cpp) # need to add others for stb
 
 # assimp
 add_subdirectory(lib/assimp)
@@ -186,7 +186,14 @@ add_custom_target(Shaders ALL DEPENDS ${SHADER_OUTPUTS})
             PROPERTIES
                 OUTPUT_NAME "ProjectName"
                 SUFFIX ""
+                INSTALL_RPATH "$ORIGIN/lib/linux"
+                BUILD_WITH_INSTALL_RPATH TRUE
         )
+
+        set(CMAKE_SKIP_BUILD_RPATH FALSE)
+        set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+        set(CMAKE_INSTALL_RPATH "$ORIGIN/lib/linux")
+
 
         # embedded libs
         set(BLOCKED_LIBS
