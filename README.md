@@ -9,16 +9,21 @@ Container to compile everything together
   ```shell
   set -e
 
-  IMAGE="srpatsu21/dear-glfw-vulkan-compiler"
+  IMAGE="srpatsu21/dear-glfw-vulkan-compiler:latest"
   DEST="."
 
-  echo "📦 Copying entire /workspace from image '$IMAGE' to local folder '$DEST'..."
-
   mkdir -p "$DEST"
-  docker run --rm -v "$(pwd)/$DEST":/copy-dest "$IMAGE" \
-    bash -c "cp -r /workspace/* /copy-dest/ || true"
+  mkdir -p "$DEST/vscode-extensions"
 
-  echo "✅ All files from /workspace copied to $DEST"
+  docker run --rm \
+      -v "$(pwd)/$DEST":/copy-dest \
+      "$IMAGE" \
+      bash -c "
+          cp -r /workspace/* /copy-dest/ || true
+          cp -r /root/.vscode-server/extensions /copy-dest/vscode-extensions/ || true
+      "
+
+  echo "files from container copied to $DEST"
   ```
 
 - Windows
@@ -26,19 +31,24 @@ Container to compile everything together
   ```shell
   $ErrorActionPreference = "Stop"
 
-  $image = "srpatsu21/dear-glfw-vulkan-compiler"
+  $image = "srpatsu21/dear-glfw-vulkan-compiler:latest"
   $dest = "."
-
-  Write-Host "📦 Copying entire /workspace from image '$image' to local folder '$dest'..."
 
   if (-not (Test-Path $dest)) {
       New-Item -ItemType Directory -Path $dest | Out-Null
   }
+  $vscodeDir = Join-Path $dest "vscode-extensions"
+  if (-not (Test-Path $vscodeDir)) {
+      New-Item -ItemType Directory -Path $vscodeDir | Out-Null
+  }
 
   docker run --rm -v "${PWD}\$dest:/copy-dest" $image `
-      bash -c "cp -r /workspace/* /copy-dest/ || true"
+      bash -c "
+          cp -r /workspace/* /copy-dest/ || true
+          cp -r /root/.vscode-server/extensions /copy-dest/vscode-extensions/ || true
+      "
 
-  Write-Host "✅ All files from /workspace copied to $dest"
+  Write-Host "Files from container copied to $dest"
   ```
 
 ## Docker Compose setup
@@ -47,8 +57,8 @@ Container to compile everything together
 
 ```yaml
 services:
-    builder:
-        image: srpatsu21/dear-glfw-vulkan-compiler
+    dear-glfw-vulkan-compiler:
+        image: srpatsu21/dear-glfw-vulkan-compiler:latest
         container_name: dear-glfw-vulkan-dev
         stdin_open: true
         tty: true
@@ -63,13 +73,16 @@ services:
             # map your libs and config
             - ./CMakeLists.txt:/workspace/CMakeLists.txt
             - ./toolchain-mingw.cmake:/workspace/toolchain-mingw.cmake
-            - lib-data:/workspace/lib
+            - ./lib:/workspace/lib
 
             # make src interactive
             - ./src:/workspace/src
 
             # if you want to replace the scripts
-            # - ./scripts:/workspace/scripts
+            - ./scripts:/workspace/scripts
+
+            # map extensions here
+            - ./vscode-extensions:/root/.vscode-server/extensions/
         command: ["/bin/bash"]
 ```
 
@@ -79,6 +92,8 @@ services:
 docker compose up -d
 docker exec -it dear-glfw-vulkan-dev bash
 ```
+
+or you can acess by vscode
 
 - run script
   - Linux Debug
