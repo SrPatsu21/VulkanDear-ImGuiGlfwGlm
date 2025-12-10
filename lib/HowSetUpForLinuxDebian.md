@@ -87,10 +87,20 @@
 ### STD
 
 - all in one
-    `mkdir -p lib/stb && curl -o lib/stb/stb_image.h https://raw.githubusercontent.com/nothings/stb/master/stb_image.h`
-- downlaod (se precisar)
-    `mkdir -p lib/stb`
-    `curl -o lib/stb/stb_image.h https://raw.githubusercontent.com/nothings/stb/master/stb_image.h`
+
+    ```shell
+    mkdir -p lib/stb &&
+    cd lib/stb &&
+    curl -O https://raw.githubusercontent.com/nothings/stb/master/stb_image.h &&
+    curl -O https://raw.githubusercontent.com/nothings/stb/master/stb_image_write.h &&
+    curl -O https://raw.githubusercontent.com/nothings/stb/master/stb_image_resize.h &&
+    curl -O https://raw.githubusercontent.com/nothings/stb/master/stb_truetype.h &&
+    curl -O https://raw.githubusercontent.com/nothings/stb/master/stb_rect_pack.h &&
+    curl -O https://raw.githubusercontent.com/nothings/stb/master/stb_sprintf.h &&
+    curl -O https://raw.githubusercontent.com/nothings/stb/master/stb_perlin.h &&
+    curl -O https://raw.githubusercontent.com/nothings/stb/master/stb_textedit.h &&
+    cd ../..
+    ```
 
 ### GLS Lang Validator
 
@@ -129,19 +139,51 @@ LIBS=(
     libgdk-3.so.0
     libdecor-0.so.0
 )
+
+BLOCKED=(
+    libc.so
+    libm.so
+    ld-linux
+    libpthread.so
+    libgcc_s.so
+    librt.so
+    libdl.so
+    libstdc++.so
+)
+
 for lib in "${LIBS[@]}"; do
-    cp "/usr/lib/x86_64-linux-gnu/$lib" "$DEST/"
-    ldd "/usr/lib/x86_64-linux-gnu/$lib" | awk '{print $3}' | grep -E '^/' | while read dep; do
-        cp -u "$dep" "$DEST/" 2>/dev/null
+    src="/usr/lib/x86_64-linux-gnu/$lib"
+    cp "$src" "$DEST/"
+
+    # procurar dependências
+    ldd "$src" | awk '{print $3}' | grep -E '^/' | while read dep; do
+        base=$(basename "$dep")
+
+        # checar se é proibida
+        skip=false
+        for bad in "${BLOCKED[@]}"; do
+            if [[ "$base" == $bad* ]]; then
+                skip=true
+                break
+            fi
+        done
+
+        if [[ $skip == false ]]; then
+            cp -u "$dep" "$DEST/" 2>/dev/null || true
+        fi
     done
 done
 
+# copiar plugins e temas (seguros)
 mkdir -p "$DEST/libdecor/plugins-1"
 cp /usr/lib/x86_64-linux-gnu/libdecor/plugins-1/* "$DEST/libdecor/plugins-1/"
+
 mkdir -p "$DEST/share/themes"
 cp -r /usr/share/themes/Adwaita "$DEST/share/themes/"
+
 mkdir -p "$DEST/share/gtk-3.0"
 cp -r /usr/share/gtk-3.0/* "$DEST/share/gtk-3.0/"
+
 mkdir -p "$DEST/share/glib-2.0/schemas"
 cp -r /usr/share/glib-2.0/schemas/* "$DEST/share/glib-2.0/schemas/"
 ```

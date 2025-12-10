@@ -24,27 +24,58 @@ RUN apt-get install -y --no-install-recommends glslang-tools
 RUN apt-get install -y --no-install-recommends libassimp-dev
 # Embedded libs
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends apt-file libdecor-0-0 libdecor-0-plugin-1-gtk libdecor-0-plugin-1-cairo libgtk-3-0 gnome-themes-extra-data && \
+    apt-get install -y --no-install-recommends \
+        apt-file \
+        libdecor-0-0 \
+        libdecor-0-plugin-1-gtk \
+        libdecor-0-plugin-1-cairo \
+        libgtk-3-0 \
+        gnome-themes-extra-data && \
     apt-file update && \
     DEST=lib/linux && \
     mkdir -p "$DEST/share" && \
+    \
+    # libs principais
     LIBS="libgtk-3.so.0 libgdk-3.so.0 libdecor-0.so.0" && \
+    \
+    # libs proibidas (NUNCA copiar)
+    BLOCKED="libc.so libm.so ld-linux libpthread.so libgcc_s.so librt.so libdl.so libstdc++.so" && \
+    \
     for lib in $LIBS; do \
-        cp "/usr/lib/x86_64-linux-gnu/$lib" "$DEST/"; \
-        ldd "/usr/lib/x86_64-linux-gnu/$lib" | awk '{print $3}' | grep -E '^/' | while read dep; do \
-            cp -u "$dep" "$DEST/" 2>/dev/null || true; \
+        src="/usr/lib/x86_64-linux-gnu/$lib"; \
+        cp "$src" "$DEST/"; \
+        \
+        # pegar dependências seguras
+        ldd "$src" | awk '{print $3}' | grep -E '^/' | while read dep; do \
+            base=$(basename "$dep"); \
+            skip=false; \
+            for bad in $BLOCKED; do \
+                case "$base" in \
+                    $bad*) skip=true ;; \
+                esac; \
+            done; \
+            \
+            if [ "$skip" = false ]; then \
+                cp -u "$dep" "$DEST/" 2>/dev/null || true; \
+            fi; \
         done; \
     done && \
+    \
+    # plugins do libdecor
     mkdir -p "$DEST/libdecor/plugins-1" && \
     cp /usr/lib/x86_64-linux-gnu/libdecor/plugins-1/* "$DEST/libdecor/plugins-1/" && \
+    \
+    # temas e dados gtk
     mkdir -p "$DEST/share/themes" && \
     cp -r /usr/share/themes/Adwaita "$DEST/share/themes/" && \
+    \
     mkdir -p "$DEST/share/gtk-3.0" && \
     cp -r /usr/share/gtk-3.0/* "$DEST/share/gtk-3.0/" && \
+    \
     mkdir -p "$DEST/share/glib-2.0/schemas" && \
     cp -r /usr/share/glib-2.0/schemas/* "$DEST/share/glib-2.0/schemas/"
 
-# vs code
+# vscode
 RUN mkdir -p /root/.vscode-server/server
 RUN curl -L https://update.code.visualstudio.com/latest/server-linux-x64/stable \
     | tar -xz -C /root/.vscode-server/server --strip-components=1

@@ -111,7 +111,7 @@ set(SHADERS
 # stb_image
 set(STB_DIR ${CMAKE_SOURCE_DIR}/lib/stb)
 include_directories(${STB_DIR})
-set(STB_SOURCES src/client/image/stb_image_impl.cpp)
+set(STB_SOURCES src/client/image/stb_impl.cpp) # need to add others for stb
 
 # assimp
 add_subdirectory(lib/assimp)
@@ -189,12 +189,34 @@ add_custom_target(Shaders ALL DEPENDS ${SHADER_OUTPUTS})
         )
 
         # embedded libs
-        set(LIBS_DIR "${CMAKE_SOURCE_DIR}/lib/linux")
+        set(BLOCKED_LIBS
+            "libc.so"
+            "libm.so"
+            "ld-linux"
+            "libpthread.so"
+            "libgcc_s.so"
+            "librt.so"
+            "libdl.so"
+            "libstdc++.so"
+        )
+        file(GLOB RAW_LIBS "${LIBS_DIR}/*.so*")
 
-        file(GLOB EXTRA_LIBS "${LIBS_DIR}/*.so*")
+        set(EXTRA_LIBS "")
+        foreach(lib ${RAW_LIBS})
+            get_filename_component(name "${lib}" NAME)
+            set(skip FALSE)
+            foreach(bad ${BLOCKED_LIBS})
+                if(name MATCHES "${bad}")
+                    set(skip TRUE)
+                endif()
+            endforeach()
+
+            if(NOT skip)
+                list(APPEND EXTRA_LIBS "${lib}")
+            endif()
+        endforeach()
+
         file(COPY ${EXTRA_LIBS} DESTINATION ${CMAKE_BINARY_DIR}/lib/linux)
-
-        file(COPY ${LIBS_DIR}/libdecor DESTINATION ${CMAKE_BINARY_DIR}/lib/linux)
 
         set_target_properties(ProjectName PROPERTIES
             INSTALL_RPATH "$ORIGIN/lib/linux"
